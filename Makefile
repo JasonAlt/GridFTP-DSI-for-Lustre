@@ -4,7 +4,7 @@ globus_gridftp_server_file.o: globus_gridftp_server_file.c
 	$(CC) -c -D_GNU_SOURCE -I/usr/include/globus/ -fPIC -DPIC globus_gridftp_server_file.c
 
 libglobus_gridftp_server_lustre.so: globus_gridftp_server_file.o
-	$(LD) -shared -o libglobus_gridftp_server_lustre.so globus_gridftp_server_file.o
+	$(LD) -shared -o libglobus_gridftp_server_lustre.so globus_gridftp_server_file.o /usr/lib64/liblustreapi.a
 
 malloc.o: malloc.c
 	$(CC) -c -D_GNU_SOURCE -I/usr/include/globus/ -fPIC -DPIC malloc.c
