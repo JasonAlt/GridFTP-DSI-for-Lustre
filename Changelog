@@ -1,0 +1,18 @@
+Thu Jul  8 10:48:32 CDT 2013 (r693)
+	- Initial release
+	- Force direct IO on reads, buffered IO on writes
+	- Set Lustre stripe width based upon incoming file size
+
+Thu Sep 19 09:37:27 CDT 2013 (r694)
+	- Toggle direct/buffered IO for read and write through env
+	  varaibles USE_DIRECT_IO_FOR_READ and USE_DIRECT_IO_FOR_WRITE.
+	  Set equal to "1" for direct IO; any other value (or not at all) for
+	  buffered IO
+
+Wed Oct  9 10:09:09 CDT 2013 (r700)
+	- Allow parent directory to override stripe count setting for incoming
+	  files if the parent stripe count setting is greater than the default
+	  stripe count necessary for the transfer to complete.
+
+Fri Oct 11 10:50:59 CDT 2013 (r701)
+	- Do not change atime when client requests MFMT or UTIME

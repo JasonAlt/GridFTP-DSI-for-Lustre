@@ -1,0 +1,1 @@
+Apply patch-<version> against globus-gridftp-server-debuginfo-<version>/modules/file/globus_gridftp_server_file.c where <version> is the version of globus-gridftp-server you are running.

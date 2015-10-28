@@ -1,0 +1,85 @@
+--- globus_gridftp_server_file.c.orig	2015-10-28 10:32:46.610554558 -0500
++++ globus_gridftp_server_file.c	2015-10-28 10:36:38.027446029 -0500
+@@ -63,6 +63,13 @@
+ 
+ #endif
+ 
++/********************************************************
++ *** BEGIN LUSTRE FIX
++ ********************************************************/
++#include "lustre.h"
++/********************************************************
++ *** END LUSTRE FIX
++ ********************************************************/
+ 
+ #ifndef MAXPATHLEN
+ #define MAXPATHLEN 4096
+@@ -2811,6 +2818,37 @@
+         monitor->expected_cksm_alg = 
+             globus_libc_strdup(transfer_info->expected_checksum_alg);
+     }
++/********************************************************
++ *** BEGIN LUSTRE FIX
++ ********************************************************/
++    {
++        int is_lustre = 0;
++
++        /* If this is a lustre file... */
++        result = is_lustre_file(transfer_info->pathname, &is_lustre);
++        if (result != GLOBUS_SUCCESS)
++            goto error_open;
++
++        if (is_lustre)
++        {
++            char * value = getenv("USE_DIRECT_IO_FOR_WRITE");
++
++            if (value && strcmp(value, "1") == 0)
++                open_flags |= O_DIRECT;
++
++            /* If this is a new file... */
++            if (transfer_info->truncate)
++            {
++                /* Create a striped file. */
++                result = create_striped_file(transfer_info->pathname, transfer_info->alloc_size);
++                if (result != GLOBUS_SUCCESS)
++                    goto error_open;
++            }
++         }
++    }
++/********************************************************
++ *** END LUSTRE FIX
++ ********************************************************/
+     
+     result = globus_l_gfs_file_open(
+         &monitor->file_handle, transfer_info->pathname, open_flags, monitor);
+@@ -3223,6 +3261,30 @@
+ 
+     open_flags = GLOBUS_XIO_FILE_BINARY | GLOBUS_XIO_FILE_RDONLY;
+ 
++/********************************************************
++ *** BEGIN LUSTRE FIX
++ ********************************************************/
++    {
++        int is_lustre = 0;
++
++        /* If this is a lustre file... */
++        result = is_lustre_file(transfer_info->pathname, &is_lustre);
++        if (result != GLOBUS_SUCCESS)
++            goto error_open;
++
++        /* Force direct IO. */
++        if (is_lustre)
++        {
++            char * value = getenv("USE_DIRECT_IO_FOR_READ");
++
++            if (value && strcmp(value, "1") == 0)
++                open_flags |= O_DIRECT;
++        }
++    }
++/********************************************************
++ *** END LUSTRE FIX
++ ********************************************************/
++
+     result = globus_l_gfs_file_open(
+         &monitor->file_handle, transfer_info->pathname, open_flags, monitor);
+     if(result != GLOBUS_SUCCESS)
