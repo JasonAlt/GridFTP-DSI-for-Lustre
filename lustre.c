@@ -51,7 +51,7 @@
 /*
  *  Lustre includes.
  */
-#include <lustre/liblustreapi.h>
+#include <lustre/lustreapi.h>
 #include <lustre/lustre_user.h>
 
 /*
